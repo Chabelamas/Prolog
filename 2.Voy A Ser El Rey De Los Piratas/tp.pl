@@ -109,7 +109,7 @@ esPeligroso(Pirata):-
   esPeligrosa(Fruta).
 
 
-%% Punto 6
+%% Punto 6 a)
 % comio(Pirata, fruta(paramecia, Nombre)).
 % comio(Pirata, fruta(zoan, Nombre, Transformacion)).
 % comio(Pirata, fruta(logia, Nombre, Transformacion)).
@@ -131,10 +131,10 @@ esFeroz(lobo).
 esFeroz(leopardo).
 esFeroz(anaconda).
 
-%% Punto 6
+%% Punto 6 b)
 /*
-b) Justificar las decisiones de modelado tomadas para cumplir con lo pedido, tanto desde el punto
-de vista de la definición como del uso de los nuevos predicados.
+La elección de los parametros (copiar el functor) del functor se debe a que creí conveniente abstraer esPeligrosa, de manera que el enunciado pueda clasificar si son o no peligrosas todos los tipos de fruta independientemente de su forma, es por ello que es un enunciado polimorfico.  
+Por otro lado, por universo cerrado, no es necesario que el predicado esPeligrosa sea inversible ya que, unicamente, se conoce el valor de verdad de las frutas que fueron comidas por las personas mencionadas, no se pueden generar frutas nuevas. Sin embargo, el predicado comio y esPeligroso deben ser inversibles ya que se podria consultar informacion de los piratas en relaciona sus ingestas.
 */
 
 %% Punto 7
