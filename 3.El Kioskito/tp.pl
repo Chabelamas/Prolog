@@ -1,5 +1,3 @@
-
-
 % atiende(Nombre, Dia, horario(Comienzo, Fin)).
 atiende(dodain, lunes, horario(9, 15)). 
 atiende(dodain, miercoles, horario(9, 15)). 
@@ -40,16 +38,52 @@ foreverAlone(Persona, Dia, Hora):-
   not((quienesAtienden(OtraPersona, Dia, Hora), Persona \= OtraPersona)).
 
 %% Punto 4
+% podrianEstarAtendiendo(Dia, Personas).
+podrianEstarAtendiendo(Dia, Personas) :-
+  findall(Persona, atiende(Persona, Dia, _), PersonasPosiblesRepetidas),
+  list_to_set(PersonasPosiblesRepetidas, PersonasPosibles),
+  combinar(PersonasPosibles, Personas). 
+
+% combinar(PersonasPosibles, Personas).
+combinar([], []).
+combinar([Persona|PersonasPosibles], [Persona|Personas]) :-
+  combinar(PersonasPosibles, Personas).
+combinar([_|PersonasPosibles], Personas) :-
+  combinar(PersonasPosibles, Personas).
+
 /*
-Dado un día, queremos relacionar qué personas podrían estar atendiendo el kiosko en algún momento de ese día. Por ejemplo, si preguntamos por el miércoles, tiene que darnos esta combinatoria:
-nadie
-dodain solo
-dodain y leoC
-dodain, vale, martu y leoC
-vale y martu
-etc.
-
-Queremos saber todas las posibilidades de atención de ese día. La única restricción es que la persona atienda ese día (no puede aparecer lucas, por ejemplo, porque no atiende el miércoles).
-
-Punto extra: indique qué conceptos en conjunto permiten resolver este requerimiento, justificando su respuesta.
+b. Qué conceptos en conjunto resuelven este requerimiento
+- findall como herramienta para poder generar un conjunto de soluciones que satisfacen un predicado
+- mecanismo de backtracking de Prolog permite encontrar todas las soluciones posibles
 */
+
+
+%% Punto 5
+% golosina(Precio).
+% cigarrillo([Marca]).
+% bebidas(conAlcohol/ sinAlcohol, Cantidad).
+
+% ventas(Persona, Dia(Numero, Mes), Ventas).
+ventas(dodain, lunes(10, 8), [golosina(1200), cigarrillos([jockey]), golosina(50)]).
+ventas(dodain, miercoles(12, 8), [bebidas(conAlcohol, 8), bebidas(sinAlcohol, 1), golosina(10)]).
+ventas(martu, miercoles(12, 8),[golosina(1000), cigarrollos([chesterfield, colorado, parisiennes])]).
+ventas(lucas, martes(11, 8), [golosina(600)]).
+ventas(lucas, martes(18, 8), [bebida(sinAlcohol, 2), cigarrillos([derby])]).
+
+% esSuertuda(Persona).
+esSuertuda(Persona):-
+  ventas(Persona, _, _),
+  forall(ventas(Persona, _, [Venta|_]), ventaImportante(Venta)).
+
+% ventaImportante(Venta).
+ventaImportante(golosina(Precio)):-
+  Precio > 100.
+
+ventaImportante(cigarrollos(Marcas)):-
+  length(Marcas, CantMarcas),
+  CantMarcas > 2.
+
+ventaImportante(bebidas(conAlcohol, _)).
+
+ventaImportante(bebidas(sinAlcohol, Cantidad)):-
+  Cantidad > 5.
