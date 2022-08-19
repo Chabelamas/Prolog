@@ -62,6 +62,7 @@ sinSatisfacer(manuel, bandera).
 sinSatisfacer(charly, afecto).
 
 
+
 %% Punto 4
 % necesidadMayorJerarquia(Persona, NecesidadMayorJerarquia).
 necesidadMayorJerarquia(Persona, Necesidad):-
@@ -79,26 +80,92 @@ satisfaceNivel(Persona, Nivel):-
     
 
 %% Punto 6 
-/*
-Motivación
-La teoría de Maslow plantea que la motivación de cualquier persona para actuar parte de sus necesidades y a medida que se satisfacen las necesidades más básicas se manifiestan otras, lo que hace que sus motivaciones también sean diferentes. En base a eso, uno de sus elementos centrales de es que las personas sólo atienden necesidades superiores cuando han satisfecho las necesidades inferiores. Por ejemplo, las necesidades de seguridad surgen cuando las necesidades fisiológicas están satisfechas. 
+verdaderaTeoriaDeMaslow:-
+    not((satisfaceNivel(Persona,_), not(verdaderaTeoriaDeMaslowParaUnaPersona(Persona)))). 
+
+verdaderaTeoriaDeMaslowParaUnaPersona(Persona):-
+    sinSatisfacer(Persona,_),
+    posicion(Nivel,Posicion),
+    not(satisfaceNivel(Persona, Nivel)),
+    forall(satisfaceNivel(Persona, NivelA), (posicion(NivelA,PosicionAnterior), Posicion > PosicionAnterior)).
+
+verdaderaTeoriaDeMaslowMayoria:-
+    cantidadPersonas(CantPersonas),
+    cantidadPersonasVerdadera(CantPersonasVerdadera),
+    MitadPoblacion is CantPersonas/2,
+    CantPersonasVerdadera >= MitadPoblacion.
+
+cantidadPersonas(CantPersonas):-
+    findall(Persona, sinSatisfacer(Persona, _), Personas),
+    list_to_set(Personas, PersonasSinRepe),
+    length(PersonasSinRepe, CantPersonas).
+
+cantidadPersonasVerdadera(CantPersonas):-
+    findall(Persona, verdaderaTeoriaDeMaslowParaUnaPersona(Persona), Personas),
+    list_to_set(Personas, PersonasSinRepe),
+    length(PersonasSinRepe, CantPersonas).
 
 
-Definir los predicados que permitan analizar si es cierta o no la teoría de Maslow:
-Para una persona en particular.
-Para todas las personas.
-Para la mayoría de las personas. 
-
-Nota: existen los predicados de aridad 0. Por ejemplo: 
-noLlegoElFinDelMundo :- vive(Alguien)..*/
-
-falsaTeoriaDeMaslow :-
+/*-------    otra variante    ---------  */
+falsateoriaDeMaslowParaUnaPersona(Persona):-
     satisfaceNivel(Persona, Nivel),
     posicion(Nivel,Posicion),
-    PosicionAnterior is Posicion - 1,
-    not((posicion(NivelAnterior,PosicionAnterior),satisfaceNivel(Persona, NivelAnterior))).                    
+    posicion(OtroNivel,PosicionAnterior),
+    PosicionAnterior < Posicion,
+    not(satisfaceNivel(Persona, OtroNivel)). 
+
+falsaTeoriaDeMaslow:-
+    falsateoriaDeMaslowParaUnaPersona(_).
+
+falsaTeoriaDeMaslowMayoria:-
+    cantidadPersonas(CantPersonas),
+    cantidadPersonasFalsa(CantPersonasFalsa),
+    MitadPoblacion is CantPersonas/2,
+    CantPersonasFalsa >= MitadPoblacion.     
+
+cantidadPersonasFalsa(CantPersonas):-
+    findall(Persona, falsateoriaDeMaslowParaUnaPersona(Persona), Personas),
+    list_to_set(Personas, PersonasSinRepe),
+    length(PersonasSinRepe, CantPersonas).
 
 
+%% Punto 7
+/*
+ > Frase elegida:
+"Porque tuve hambre, y ustedes me dieron de comer; tuve sed, y me dieron de beber; 
+fui forastero, y me dieron alojamiento; necesité ropa, y me vistieron; estuve enfermo, y me atendieron; 
+estuve en la cárcel, y me visitaron." Jesús de Nazareth (Mateo 25; 35-36)
+*/
+
+% obrasCaridad(Persona, ayudoA(AccionParaAyudar, Atendido)).
+% obrasCaridad(Persona, necesidades(ListaNecesidades)).
+obrasCaridad(alan, ayudoA(dioComida, jesus)).
+obrasCaridad(mica, ayudoA(dioBebida, jesus)).
+obrasCaridad(gabi, ayudoA(dioHogar, jesus)).
+obrasCaridad(flor, ayudoA(dioRopa, jesus)).
+obrasCaridad(joselin, ayudoA(atendio, jesus)).
+obrasCaridad(chabela, ayudoA(vioEnCarcel, jesus)).
+obrasCaridad(jesus, necesidades([comer, tomar, alojarse, vestirse, serAtendido, serVisitadoEnCarcel])).
+
+% satisface(AccionParaAyudar, NecesidadQueSatisface).
+satisface(dioComida, comer).
+satisface(dioBebida, tomar).
+satisface(dioHogar, alojarse).
+satisface(dioRopa, vestirse).
+satisface(atendio, serAtendido).
+satisface(vioEnCarcel, serVisitadoEnCarcel).
 
 
+% estaVivo(Persona).
+estaVivo(Persona):- 
+    obrasCaridad(Persona, Accion),
+    cumplenCriterioDeVivir(Persona, Accion).
 
+% cumplenCriterioDeVivir(Persona, Accion).
+cumplenCriterioDeVivir(Persona, necesidades(ListaNecesidades)):-
+    forall(member(Necesidad, ListaNecesidades), (obrasCaridad(_, ayudoA(Ayuda, Persona)), satisface(Ayuda, Necesidad))).
+cumplenCriterioDeVivir(_, ayudoA(_, _)).
+
+/*
+El predicado 'estaVivo' resulta ser polimórfico, ya que al contar con predicados auxiliares que puedan recibir diferentes alternativas, no debe ser modificado ni reescrito varias veces. Además, es posible agregarle cláusulas nuevas o nueva formas de 'estarVivo' sin que se vea afectado por ello el predicado original.
+*/
