@@ -73,21 +73,22 @@ necesidadMayorJerarquia(Persona, Necesidad):-
 
 %% Punto 5
 % satisfaceNivel(Persona, NivelSatisfecho).
-satisfaceNivel(Persona, Nivel):-
+satisfaceNivel(Persona, Nivel):- 
     sinSatisfacer(Persona, _),
-    necesidad(_, Nivel),
-    forall(necesidad(Necesidad, Nivel), not(sinSatisfacer(Persona, Necesidad))).
-    
+    posicion(Nivel,Posicion),
+    not((necesidad(Necesidad, Nivelx), 
+        posicion(Nivelx,Posicionx),
+        Posicionx =< Posicion, 
+        sinSatisfacer(Persona, Necesidad))).
 
 %% Punto 6 
 verdaderaTeoriaDeMaslow:-
     not((satisfaceNivel(Persona,_), not(verdaderaTeoriaDeMaslowParaUnaPersona(Persona)))). 
 
 verdaderaTeoriaDeMaslowParaUnaPersona(Persona):-
-    sinSatisfacer(Persona,_),
-    posicion(Nivel,Posicion),
-    not(satisfaceNivel(Persona, Nivel)),
-    forall(satisfaceNivel(Persona, NivelA), (posicion(NivelA,PosicionAnterior), Posicion > PosicionAnterior)).
+    sinSatisfacer(Persona, Necesidad),
+    necesidad(Necesidad, Nivel),
+    forall(sinSatisfacer(Persona, Necesidadx), necesidad(Necesidadx, Nivel)).
 
 verdaderaTeoriaDeMaslowMayoria:-
     cantidadPersonas(CantPersonas),
@@ -154,7 +155,6 @@ satisface(dioHogar, alojarse).
 satisface(dioRopa, vestirse).
 satisface(atendio, serAtendido).
 satisface(vioEnCarcel, serVisitadoEnCarcel).
-
 
 % estaVivo(Persona).
 estaVivo(Persona):- 
