@@ -1,4 +1,4 @@
-%%BASE DE DATOS
+%% BASE DE DATOS
 % rata(Nombre, DondeVive).
 rata(remy, gusteaus).
 rata(emile, bar).
@@ -28,27 +28,27 @@ plato(frutillasConCrema, postre(265)).
 grupo(frutillasConCrema).
 
 
-%%PUNTO 1
+%% PUNTO 1
 % inspeccionSatisfactoria(Restaurante).
 inspeccionSatisfactoria(Restaurante):-
     trabajaEn(Restaurante, _),
     not(rata(_, Restaurante)).
 
 
-%%PUNTO 2
+%% PUNTO 2
 % chef(Empleado, Restaurante).
 chef(Empleado, Restaurante):-
     trabajaEn(Restaurante, Empleado),
     cocina(Empleado, _, _).
 
-%%PUNTO 3
+%% PUNTO 3
 % chefcito(Rata).
 chefcito(Rata):-
     rata(Rata, Restaurante),
     trabajaEn(Restaurante, linguini).
 
 
-%%PUNTO 4 
+%% PUNTO 4 
 % cocinaBien(Empleado, Plato).
 cocinaBien(Empleado, Plato):-
     cocina(Empleado, Plato, Experiencia),
@@ -58,7 +58,7 @@ cocinaBien(remy, Plato):-
     cocina(_, Plato, _).
 
 
-%%PUNTO 5
+%% PUNTO 5
 % encargadoDe(Empleado, Plato, Restaurante).
 encargadoDe(Empleado, Plato, Restaurante):-
     trabajaEn(Restaurante, Empleado),
@@ -66,7 +66,7 @@ encargadoDe(Empleado, Plato, Restaurante):-
     forall((trabajaEn(Restaurante, Empleado2), Empleado2 \= Empleado, cocina(Plato, Empleado2, Experiencia2)), Experiencia2 < Experiencia).
 
 
-%%PUNTO 6
+%% PUNTO 6
 % saludable(Plato)
 saludable(Plato):-
     plato(Plato, postre(_)),
@@ -95,7 +95,7 @@ aporteGuarnicion(pure, 20).
 aporteGuarnicion(ensalada, 0).
 
 
-%%PUNTO 7
+%% PUNTO 7
 % criticaPositiva(Critico, Restaurante).
 criticaPositiva(Critico, Restaurante):-
     inspeccionSatisfactoria(Restaurante),
